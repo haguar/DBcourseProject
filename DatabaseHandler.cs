@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic; 
 using Npgsql;
 using System.Data;
+using System.Windows.Forms;
+using System.Drawing;
 
 class DatabaseHandler {    
 
         public void createAccount(string username, string password, string firstName, 
-        string lastName, string email) {
+        string lastName, string email, Label messageBoard) {
             using(NpgsqlConnection con = GetConnection()) {    
                 string query = $"insert into userinfo(username,password,firstName,lastName,email)values('{username}','{password}','{firstName}','{lastName}','{email}')";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
@@ -16,10 +18,10 @@ class DatabaseHandler {
                     n = cmd.ExecuteNonQuery();
                 } catch (PostgresException e) {
                     con.Close();
-                    Console.WriteLine("Duplicate Username/Emails, use a different one");
+                    messageBoard.Text = "Duplicate Username/Emails, use a different one";
                 }
                 if(n==1) {
-                    Console.WriteLine("Account Created");
+                    messageBoard.Text = "Account Created";
                 }
                 con.Close();
             }
