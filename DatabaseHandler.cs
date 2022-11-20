@@ -37,7 +37,7 @@ class DatabaseHandler {
         }
 
         private NpgsqlConnection GetConnection() {
-            return new NpgsqlConnection(@"Server=localhost;Port=5432;User Id=postgres; Password=comp586;Database=projdb");
+            return new NpgsqlConnection(@"Server=localhost;Port=5432;User Id=postgres; Password=comp440; Database=postgres");
         }
 
         public bool checkLogin(string username, string password) {

@@ -119,6 +119,9 @@ public partial class GUIHandler : Form {
             }
             if(database.checkLogin(username, password) == true) {
                 messageBoard.Text = "Login Successful";
+                Blog blog = new Blog();
+                Hide();
+                blog.Show();
             } else {
                 messageBoard.Text = "Login Fail";
             }        
