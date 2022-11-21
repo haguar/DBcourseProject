@@ -24,8 +24,9 @@ public partial class GUIHandler : Form {
     private Button button2;
     private Button button3;
     private Label messageBoard;
-    private static DatabaseHandler database = new DatabaseHandler();
-    public GUIHandler() {
+    private DatabaseHandler database;
+    public GUIHandler(DatabaseHandler database) {
+        this.database = database;
         createGUI();
     }
 
@@ -119,6 +120,9 @@ public partial class GUIHandler : Form {
             }
             if(database.checkLogin(username, password) == true) {
                 messageBoard.Text = "Login Successful";
+                Blog blog = new Blog(database);
+                Hide();
+                blog.Show();
             } else {
                 messageBoard.Text = "Login Fail";
             }        

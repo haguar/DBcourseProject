@@ -4,8 +4,9 @@ using Npgsql;
 using System.Data;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Collections;
 
-class DatabaseHandler {    
+public class DatabaseHandler {    
     private string userName;
         public void createAccount(string username, string password, string firstName, 
         string lastName, string email, Label messageBoard) {
@@ -92,6 +93,7 @@ class DatabaseHandler {
 
         //methods for part 2
         public void createBlog(string subject, string description, string tags, Label messageBoard) {
+
             DateTime dt = DateTime.Today;
             //checks if blogs have been posted twice already today
             using(NpgsqlConnection con = GetConnection()) {
@@ -207,5 +209,20 @@ class DatabaseHandler {
                 con.Close();
             }
         }
-        
+
+        public string[] getBlogs() {
+            ArrayList blogList = new ArrayList();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From blogs";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
 }

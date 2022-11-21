@@ -6,17 +6,15 @@ namespace DBcourseProject
 {
     class Program
     {
-        static DatabaseHandler database = new DatabaseHandler();
-        //GUIHandler gui = new GUIHandler();
         static void Main(string[] args)
         {
-            Label temp = new Label();
-            database.createAccount("test1", "pass", "Pat", "Ish", "@gma2il.com", temp);
-            database.checkLogin("test1", "pass");
-            database.createComments("positive", "I hate math", 1, temp);
-            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            //Application.EnableVisualStyles();
-            //Application.Run(new GUIHandler());
+            //Label temp = new Label();
+            //database.createAccount("test1", "pass", "Pat", "Ish", "@gma2il.com", temp);
+            //database.checkLogin("test1", "pass");
+            //database.createComments("positive", "I hate math", 1, temp);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.Run(new GUIHandler(new DatabaseHandler()));
             
             //chooseLoginOrCreate();
         }
