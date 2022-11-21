@@ -148,8 +148,7 @@ public partial class GUIHandler : Form {
         }
 
         private void reCreateDatabaseOnClick(object sender, EventArgs e) {
-            database.destroyDatabase();
-            database.createDatabase();
+            database.resetDatabase();
             messageBoard.Text = "Database Recreated";
         }
 }

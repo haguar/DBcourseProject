@@ -65,28 +65,12 @@ public class DatabaseHandler {
             return false;
         }
 
-        public void destroyDatabase() {
+        public void resetDatabase() {
             using(NpgsqlConnection con = GetConnection()) {
-                string query = $"DROP TABLE IF EXISTS userinfo";
+                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo RESTART IDENTITY";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 int n = cmd.ExecuteNonQuery();
-                if(n==1) {
-                    Console.WriteLine("Database Destroyed");
-                }
-                con.Close();
-            }
-        }
-
-        public void createDatabase() {
-            using(NpgsqlConnection con = GetConnection()) {
-                string query = $"CREATE TABLE userinfo(userName varchar(50) primary key, password varchar(50), firstName varchar(50), lastName varchar(50), email varchar(50) UNIQUE)";
-                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
-                con.Open();
-                int n = cmd.ExecuteNonQuery();
-                if(n==1) {
-                    Console.WriteLine("Database Created");
-                }
                 con.Close();
             }
         }
