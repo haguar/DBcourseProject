@@ -9,4 +9,4 @@ Patrick Ishkhanyan: Worked on the functionality
 
 Hannah Alcantara: Worked on the GUI
 
-Youtube URL: 
+Youtube URL: https://youtu.be/Oxe2Z3tfCgE

@@ -38,7 +38,7 @@ public class DatabaseHandler {
         }
 
         private NpgsqlConnection GetConnection() {
-            return new NpgsqlConnection(@"Server=localhost;Port=5432;User Id=postgres; Password=comp586;Database=projdb");
+            return new NpgsqlConnection(@"Server=localhost;Port=5432;User Id=postgres; Password=barrow9;Database=postgres");
         }
 
         public bool checkLogin(string tempUsername, string password) {
@@ -67,7 +67,7 @@ public class DatabaseHandler {
 
         public void resetDatabase() {
             using(NpgsqlConnection con = GetConnection()) {
-                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo RESTART IDENTITY";
+                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo, follows, hobbies RESTART IDENTITY";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 int n = cmd.ExecuteNonQuery();
@@ -202,6 +202,24 @@ public class DatabaseHandler {
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read()) {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getBlogsFromUser(string username)
+        {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT * From blogs";              //modify this select statement to return blogs from the passed in username
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
                     blogList.Add(reader[0].ToString());
                 }
                 con.Close();

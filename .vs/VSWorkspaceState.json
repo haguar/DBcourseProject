@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\bin",
+    "\\bin\\Debug",
+    "\\bin\\Debug\\netcoreapp3.1",
+    "\\obj",
+    "\\obj\\Debug",
+    "\\obj\\Debug\\netcoreapp3.1"
+  ],
+  "SelectedNode": "\\DatabaseHandler.cs",
+  "PreviewInSolutionExplorer": false
+}
