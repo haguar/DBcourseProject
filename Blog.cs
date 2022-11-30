@@ -17,6 +17,7 @@ public partial class Blog : Form {
     private DataGridView dataGridView1 = new DataGridView();
     //phase 3 features
     private Button blogList;
+    private Label usernameBlogListLabel;
     private TextBox userBlogList;
     private Button topCommenter;
     private Button followedBy;
@@ -93,6 +94,9 @@ public partial class Blog : Form {
         blogList.Text = "List Blogs";
         blogList.AutoSize = true;
         blogList.Click += new System.EventHandler(blogListOnClick);
+        usernameBlogListLabel = new Label();
+        usernameBlogListLabel.Text = "Username: ";
+        usernameBlogListLabel.AutoSize = true;
         userBlogList = new TextBox();
 
         topCommenter = new Button();
@@ -129,6 +133,7 @@ public partial class Blog : Form {
         //add phase 3 buttons to flowpanel
         flowPanel.Controls.Add(dataGridView1);
         flowPanel.Controls.Add(blogList);
+        flowPanel.Controls.Add(usernameBlogListLabel);
         flowPanel.Controls.Add(userBlogList);
         flowPanel.Controls.Add(topCommenter);
         flowPanel.Controls.Add(followedBy);
