@@ -129,6 +129,7 @@ public partial class Blog : Form {
         //add phase 3 buttons to flowpanel
         flowPanel.Controls.Add(dataGridView1);
         flowPanel.Controls.Add(blogList);
+        flowPanel.Controls.Add(userBlogList);
         flowPanel.Controls.Add(topCommenter);
         flowPanel.Controls.Add(followedBy);
         flowPanel.Controls.Add(neverPosted);
