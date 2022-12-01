@@ -21,6 +21,7 @@ public partial class Blog : Form {
     private TextBox userBlogList;
     private Button topCommenter;
     private Button followedBy;
+    private Label userXLabel;
     private TextBox followedByX;
     private TextBox followedByY;
     private Button neverPosted;
@@ -33,10 +34,26 @@ public partial class Blog : Form {
     }
     private void blogListOnClick(object sender, EventArgs e) {
         string usernameToGetBlogsFor = userBlogList.Text;
-        database.getBlogsFromUser(usernameToGetBlogsFor);
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Blogs");
+        foreach (var blog in database.getBlogsFromUser(usernameToGetBlogsFor)) { dt.Rows.Add(blog);}
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
     }
     private void topCommenterOnClick(object sender, EventArgs e) { }
-    private void followedByOnClick(object sender, EventArgs e) { }
+    private void followedByOnClick(object sender, EventArgs e) {
+        string userXFollowedBy = followedByX.Text;
+        string userYFollowedBy = followedByY.Text;
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Blogs");
+        foreach (var user in database.getFollowedBy(userXFollowedBy, userYFollowedBy)) { dt.Rows.Add(user); }
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
+    }
     private void neverPostedOnClick(object sender, EventArgs e) { }
     private void noNegativesOnClick(object sender, EventArgs e) { }
     private void commonHobbyOnClick(object sender, EventArgs e) { }
@@ -50,7 +67,7 @@ public partial class Blog : Form {
         buttonAdd.Click += new System.EventHandler(addBlogOnClick);
 
         Text = "Blog";
-        ClientSize = new Size(800, 450);
+        ClientSize = new Size(700, 450);
         flowPanel = new FlowLayoutPanel();
 
         flowPanel.Dock = DockStyle.Fill;
@@ -78,16 +95,6 @@ public partial class Blog : Form {
         buttonPostComment.Text = "Post";
         buttonPostComment.AutoSize = true;
         buttonPostComment.Click += new System.EventHandler(postCommentOnClick);
-
-        //fill out columns of the datagridview
-        dt.Columns.Add("Username", typeof(string));
-        dt.Columns.Add("Blogs", typeof(string));
-        dt.Columns.Add("Author", typeof(string));
-
-        dt.Rows.Add(new object[] { "Book A", DateTime.Parse("1/1/2016"), "Author A" });
-        dt.Rows.Add(new object[] { "Book B", DateTime.Parse("1/2/2016"), "Author B" });
-        dt.Rows.Add(new object[] { "Book C", DateTime.Parse("1/3/2016"), "Author C" });
-        dataGridView1.DataSource = dt;
         dataGridView1.Size = new Size(500, 250);
 
         blogList = new Button();
@@ -108,6 +115,11 @@ public partial class Blog : Form {
         followedBy.Text = "Follows";
         followedBy.AutoSize = true;
         followedBy.Click += new System.EventHandler(followedByOnClick);
+        userXLabel = new Label();
+        userXLabel.Text = "Username: ";
+        userXLabel.AutoSize = true;
+        followedByX = new TextBox();
+        followedByY = new TextBox();
 
         neverPosted = new Button();
         neverPosted.Text = "Users Who Haven't Posted";
@@ -131,15 +143,20 @@ public partial class Blog : Form {
         flowPanel.Controls.Add(commentTextBox);
         flowPanel.Controls.Add(buttonPostComment);
         //add phase 3 buttons to flowpanel
-        flowPanel.Controls.Add(dataGridView1);
+        
         flowPanel.Controls.Add(blogList);
         flowPanel.Controls.Add(usernameBlogListLabel);
         flowPanel.Controls.Add(userBlogList);
-        flowPanel.Controls.Add(topCommenter);
         flowPanel.Controls.Add(followedBy);
+        flowPanel.Controls.Add(userXLabel);
+        flowPanel.Controls.Add(followedByX);
+        flowPanel.Controls.Add(userXLabel);
+        flowPanel.Controls.Add(followedByY);
+        flowPanel.Controls.Add(topCommenter);
         flowPanel.Controls.Add(neverPosted);
         flowPanel.Controls.Add(noNegatives);
         flowPanel.Controls.Add(commonHobby);
+        flowPanel.Controls.Add(dataGridView1);
 
         flowPanel.Controls.Add(messageBoard);
         Controls.Add(flowPanel);
