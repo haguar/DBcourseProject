@@ -214,7 +214,24 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT * From blogs";              //modify this select statement to return blogs from the passed in username
+                string query = $"SELECT subject from blogs where created_by = '{ username}'";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getFollowedBy(string user1, string user2) {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT subject from blogs where created_by = '{ user1}'";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
