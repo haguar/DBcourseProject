@@ -42,7 +42,15 @@ public partial class Blog : Form {
         dataGridView1.AutoResizeColumns();
         flowPanel.Controls.Add(dataGridView1);
     }
-    private void topCommenterOnClick(object sender, EventArgs e) { }
+    private void topCommenterOnClick(object sender, EventArgs e) {
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Username");
+        foreach (var user in database.getTopCommenter()) { dt.Rows.Add(user); }
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
+    }
     private void followedByOnClick(object sender, EventArgs e) {
         string userXFollowedBy = followedByX.Text;
         string userYFollowedBy = followedByY.Text;
@@ -54,9 +62,35 @@ public partial class Blog : Form {
         dataGridView1.AutoResizeColumns();
         flowPanel.Controls.Add(dataGridView1);
     }
-    private void neverPostedOnClick(object sender, EventArgs e) { }
-    private void noNegativesOnClick(object sender, EventArgs e) { }
-    private void commonHobbyOnClick(object sender, EventArgs e) { }
+    private void neverPostedOnClick(object sender, EventArgs e) {
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Username");
+        foreach (var user in database.getNeverPosted()) { dt.Rows.Add(user); }
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
+    }
+    private void noNegativesOnClick(object sender, EventArgs e) {
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Username");
+        foreach (var user in database.getNoNegatives()) { dt.Rows.Add(user); }
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
+    }
+    private void commonHobbyOnClick(object sender, EventArgs e) {
+        dt.Columns.Clear();
+        dt.Rows.Clear();
+        dt.Columns.Add("Username");
+        dt.Columns.Add("Username");
+        dt.Columns.Add("Hobby");
+        foreach (var hobbytuple in database.getCommonHobbies()) { dt.Rows.Add(hobbytuple); }
+        dataGridView1.DataSource = dt;
+        dataGridView1.AutoResizeColumns();
+        flowPanel.Controls.Add(dataGridView1);
+    }
 
     private void createGUI()
     {

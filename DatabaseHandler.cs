@@ -231,7 +231,79 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs where created_by = '{ user1}'";
+                string query = $"SELECT subject from blogs where created_by = '{ user1}'"; //insert correct SELECT statement here
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getTopCommenter()
+        {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getNeverPosted()
+        {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getNoNegatives()
+        {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    blogList.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            string[] returnable = (string[])blogList.ToArray(typeof(string));
+            return returnable;
+        }
+        public string[] getCommonHobbies()                      //this function needs to return a 3-part-tuple
+        {
+            ArrayList blogList = new ArrayList();
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
