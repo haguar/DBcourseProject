@@ -214,7 +214,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs where created_by = '{ username}'";
+                string query = $"SELECT description from comments where sentiment = 'positive' AND posted_by = '{ username}'";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -231,7 +231,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs where created_by = '{ user1}'"; //insert correct SELECT statement here
+                string query = $"SELECT leadername from follows where followername = '{ user1} AND {user2}'";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -249,7 +249,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
+                string query = $"SELECT posted_by from comments GROUP BY posted_by having COUNT(posted_by) = (SELECT MAX(count) FROM (SELECT posted_by, COUNT(posted_by)  from comments GROUP BY posted_by) as mycount)";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
