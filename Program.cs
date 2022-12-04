@@ -8,10 +8,15 @@ namespace DBcourseProject
     {
         static void Main(string[] args)
         {
-            //Label temp = new Label();
+            Label temp = new Label();
+            //DatabaseHandler database = new DatabaseHandler();
             //database.createAccount("test1", "pass", "Pat", "Ish", "@gma2il.com", temp);
             //database.checkLogin("test1", "pass");
             //database.createComments("positive", "I hate math", 1, temp);
+            // database.listOfPositiveBlogs("temp", temp);
+            // database.mostNumberOfComments(temp);
+            // database.neverPostedBlog(temp);
+
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.Run(new GUIHandler(new DatabaseHandler()));

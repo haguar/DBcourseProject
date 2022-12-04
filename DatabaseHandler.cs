@@ -5,6 +5,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
+using System.Linq;
 
 public class DatabaseHandler {    
     private string userName;
@@ -67,7 +68,7 @@ public class DatabaseHandler {
 
         public void resetDatabase() {
             using(NpgsqlConnection con = GetConnection()) {
-                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo RESTART IDENTITY";
+                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo, follows, hobbies RESTART IDENTITY";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 int n = cmd.ExecuteNonQuery();
@@ -208,5 +209,274 @@ public class DatabaseHandler {
             }
             string[] returnable = (string[])blogList.ToArray(typeof(string));
             return returnable;
+        }
+
+        //phase 3
+        public void listOfPositiveBlogs(string user, Label messageBoard) {
+            ArrayList blogIds = new ArrayList();
+
+            //gets all the blog ids of blogs posted by user X
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From blogs WHERE created_by = {user}";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    blogIds.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+
+            //checks if all comments for each blog prev found is positive
+            string blogIdMessage = "The Following Are All Positive Blog Ids: ";
+            using(NpgsqlConnection con = GetConnection()) {
+                bool allPos = true;
+                for(int i = 0; i < blogIds.Count; i++) {
+                    allPos = true;
+                    string query = $"SELECT * From comments WHERE blogid = {blogIds[i]}";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                    con.Open();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read()) {
+                        if(reader[1].ToString() == "negative") {
+                            allPos = false;
+                        }
+                    }
+                    if(allPos) {
+                        blogIdMessage += blogIds[i];
+                    }
+                    con.Close();
+                }
+            }
+            messageBoard.Text = blogIdMessage;
+        }
+
+        //gets user(s) with most number of comments
+        public void mostNumberOfComments(Label messageBoard) {
+            ArrayList mostComments = new ArrayList();
+            Dictionary<string, int> commentsTracker = new Dictionary<string, int>();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From comments";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    commentsTracker.Add(reader[5].ToString(), commentsTracker[reader[5].ToString()] + 1);
+                }
+                con.Close();
+            }
+            int max = -1;
+            foreach(var key in commentsTracker) {
+                if(key.Value > max) {
+                    mostComments.Clear();
+                    mostComments.Add(key);
+                    max = key.Value;
+                } else if(key.Value == max) {
+                    mostComments.Add(key);
+                }
+            }
+
+            string message = "User(s) With the Most Comments: ";
+            for(int i = 0; i < mostComments.Count; i++) {
+                message += mostComments[i] + ", ";
+            }
+            messageBoard.Text = message;
+        }
+
+        //4
+        public void neverPostedBlog(Label messageBoard) {
+            //username
+            ArrayList listOfUsers = new ArrayList();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From userinfo";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    listOfUsers.Add(reader[0]);    
+                }
+                con.Close();
+            }
+            for(int i = 0; i < listOfUsers.Count; i++) {
+                using(NpgsqlConnection con = GetConnection()) {
+                    string query = $"SELECT * From blogs WHERE created_by = {listOfUsers[i]}";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                    con.Open();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    if(reader.HasRows) {
+                        listOfUsers.Remove(listOfUsers[i]);
+                    }
+                    con.Close();
+                }
+            }
+
+            string message = "Users Who've Never Posted A Blog: ";
+            for(int i = 0; i < listOfUsers.Count; i++) {
+                message += listOfUsers[i] + ", ";
+            }
+            messageBoard.Text = message;
+        }
+
+        //All blogs are positive Comments 5
+        public void listOfUsersWithAllPositiveComments(Label messageBoard) {
+            //grab all users
+
+            //for each user, grab an arraylist with all of their blogids
+
+            //store it in a dictionary
+
+            //traverse through each arraylist, if no negatives are found, include it in returnable
+            ArrayList users = new ArrayList();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From userinfo";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    users.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+
+            Dictionary<string, object> userBlogsList = new Dictionary<string, object>();
+            for(int i = 0; i < users.Count; i++) {
+                using(NpgsqlConnection con = GetConnection()) {
+                    ArrayList temp = new ArrayList();
+                    string query = $"SELECT * From blogs WHERE created_by = {users[i]}";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                    con.Open();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read()) {
+                        temp.Add(reader[0].ToString());
+                    }
+                    con.Close();
+                    userBlogsList.Add(users[i].ToString(),temp);
+                }
+            }
+
+            ArrayList answer = new ArrayList();
+            foreach(var user in userBlogsList) {
+                ArrayList temp = (ArrayList)user.Value;
+                for(int i = 0; i < temp.Count; i++) {
+                    bool isAllPos = true;
+                    using(NpgsqlConnection con = GetConnection()) {
+                        string query = $"SELECT * From comments WHERE blogid = {temp[i]}";
+                        NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                        con.Open();
+                        NpgsqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read()) {
+                            if(reader[1].ToString() == "negative") {
+                                isAllPos = false;
+                            }
+                        }
+                        con.Close();
+                    }
+                    if(isAllPos) {
+                        answer.Add(user.Key);
+                    }
+                }
+            }
+            string message = "Users Who've Never Had A Negative Comment: ";
+            for(int i = 0; i < answer.Count; i++) {
+                message += answer[i] + ", ";
+            }
+            messageBoard.Text = message;
+        }
+
+        //All users followed by both 
+        public void followedByBoth(string userOne, string userTwo, Label messageBoard) {
+            ArrayList listOfUsers = new ArrayList();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT leadername From follows WHERE followername = {userOne}";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    listOfUsers.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+            for(int i = 0; i < listOfUsers.Count; i++) {
+                using(NpgsqlConnection con = GetConnection()) {
+                    string query = $"SELECT * From follows WHERE leadername = {listOfUsers[i]} AND followername = {userTwo}";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                    con.Open();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    if(!(reader.HasRows)) {
+                        listOfUsers.RemoveAt(i);
+                        i--;
+                    }
+                con.Close();
+                }
+            }
+            
+            string message = $"Users Who're Followed By Both {userOne} and {userTwo}: ";
+            for(int i = 0; i < listOfUsers.Count; i++) {
+                message += listOfUsers[i] + ", ";
+            }
+            messageBoard.Text = message;
+        }
+
+        //returns the pair of users with the same hobby, and the hobby 6
+        public void pairOfSameHobby(Label messageBoard) {
+            //get all users
+
+            //store all hobbies of each user in an arraylist
+
+            //store everything in a dictionary
+
+            //brute force solution, nested for loop with inner loop starting at i + 1
+
+            //store answers in an arraylist, with user1 at index 0, user2 at index 1, hobby at 2
+            ArrayList users = new ArrayList();
+            using(NpgsqlConnection con = GetConnection()) {
+                string query = $"SELECT * From userinfo";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    users.Add(reader[0].ToString());
+                }
+                con.Close();
+            }
+
+            Dictionary<string, object> userHobbyList = new Dictionary<string, object>();
+            for(int i = 0; i < users.Count; i++) {
+                using(NpgsqlConnection con = GetConnection()) {
+                    ArrayList temp = new ArrayList();
+                    string query = $"SELECT * From hobbies WHERE username = {users[i]}";
+                    NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                    con.Open();
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read()) {
+                        temp.Add(reader[1].ToString());
+                    }
+                    con.Close();
+                    userHobbyList.Add(users[i].ToString(),temp);
+                }
+            }
+
+            ArrayList answer = new ArrayList();
+            for(int i = 0; i < userHobbyList.Count; i++) {
+                ArrayList tempOne = (ArrayList)userHobbyList.ElementAt(i).Value;
+                for(int j = i + 1; j < userHobbyList.Count; j++) {
+                    ArrayList tempTwo = (ArrayList)userHobbyList.ElementAt(j).Value;
+                    //have 2 arraylists, need to compare them for similar hobbies
+                    for(int z = 0; z < tempOne.Count; z++) {
+                        if(tempTwo.Contains(tempOne[z])) {
+                            answer.Add(userHobbyList.ElementAt(i).Key);
+                            answer.Add(userHobbyList.ElementAt(j).Key);
+                            answer.Add(tempOne[z]);
+                        }
+                    }
+                }
+            }
+            string message = "Users who have similar hobbies: ";
+            for(int i = 0; i < answer.Count; i+=3) {
+                message += answer[i] + ", ";
+                message += answer[i+1] + ", ";
+                message += answer[i+2] += "; ";
+            }
+            messageBoard.Text = message;
         }
 }
