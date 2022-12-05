@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Data;
+using System.Collections;
 
 public partial class Blog : Form {
     private FlowLayoutPanel flowPanel;
@@ -83,10 +84,27 @@ public partial class Blog : Form {
     private void commonHobbyOnClick(object sender, EventArgs e) {
         dt.Columns.Clear();
         dt.Rows.Clear();
-        dt.Columns.Add("Username");
-        dt.Columns.Add("Username");
         dt.Columns.Add("Hobby");
-        foreach (var hobbytuple in database.getCommonHobbies()) { dt.Rows.Add(hobbytuple); }
+        dt.Columns.Add("Username1");
+        dt.Columns.Add("Username2");
+        dt.Columns.Add("Username3");
+        dt.Columns.Add("Username4");
+        dt.Columns.Add("Username5");
+        string[] commonhobbies = database.getCommonHobbies();
+        ArrayList row = new ArrayList();
+        for (int i=0; i < commonhobbies.Length; i++) {
+            if (commonhobbies[i] != "^")
+            {
+                
+                row.Add(commonhobbies[i].ToString());
+                if (commonhobbies.Length-1 == i) {dt.Rows.Add(row.ToArray()); }
+            }
+            
+            else {
+                dt.Rows.Add(row.ToArray());
+                row.Clear(); }
+        }
+        //foreach (var hobbytuple in database.getCommonHobbies()) { dt.Rows.Add(new object[]{hobbytuple}); Console.WriteLine(hobbytuple); }
         dataGridView1.DataSource = dt;
         dataGridView1.AutoResizeColumns();
         flowPanel.Controls.Add(dataGridView1);
@@ -101,7 +119,7 @@ public partial class Blog : Form {
         buttonAdd.Click += new System.EventHandler(addBlogOnClick);
 
         Text = "Blog";
-        ClientSize = new Size(700, 450);
+        ClientSize = new Size(800, 450);
         flowPanel = new FlowLayoutPanel();
 
         flowPanel.Dock = DockStyle.Fill;
@@ -132,7 +150,7 @@ public partial class Blog : Form {
         dataGridView1.Size = new Size(500, 250);
 
         blogList = new Button();
-        blogList.Text = "List Blogs";
+        blogList.Text = "List Blogs (Positive comments only)";
         blogList.AutoSize = true;
         blogList.Click += new System.EventHandler(blogListOnClick);
         usernameBlogListLabel = new Label();

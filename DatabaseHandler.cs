@@ -231,7 +231,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT leadername from follows where followername = '{user1} AND {user2}'";
+                string query = $"SELECT leadername FROM follows WHERE leadername IN (SELECT leadername FROM follows WHERE followername = '{user1}' UNION SELECT leadername FROM follows WHERE followername = '{user2}')";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -241,6 +241,7 @@ public class DatabaseHandler {
                 }
                 con.Close();
             }
+            blogList.RemoveAt(0);
             string[] returnable = (string[])blogList.ToArray(typeof(string));
             return returnable;
         }
@@ -303,14 +304,19 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs"; //insert correct SELECT statement here
+                string query = $"SELECT hobby, username from hobbies where hobby IN (SELECT hobby from hobbies group by hobby having COUNT(hobby) > 1) order by hobby";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    blogList.Add(reader[0].ToString());
+                    if (!blogList.Contains(reader[0].ToString())) { 
+                        blogList.Add("^");
+                        blogList.Add(reader[0].ToString()); ; 
+                    }
+                    blogList.Add(reader[1].ToString());
                 }
+                while (reader.Read()) { blogList.Add(reader[0].ToString()); }
                 con.Close();
             }
             string[] returnable = (string[])blogList.ToArray(typeof(string));
