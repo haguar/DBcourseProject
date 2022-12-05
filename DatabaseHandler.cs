@@ -271,7 +271,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT leadername FROM follows WHERE leadername IN (SELECT leadername FROM follows WHERE followername = '{user1}' UNION SELECT leadername FROM follows WHERE followername = '{user2}')";
+                string query = $"SELECT leadername FROM follows WHERE leadername IN (SELECT leadername FROM follows WHERE followername = '{user1}' INTERSECT SELECT leadername FROM follows WHERE followername = '{user2}')";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
