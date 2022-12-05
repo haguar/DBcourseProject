@@ -254,7 +254,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT description from comments where sentiment = 'positive' AND posted_by = '{ username}'";
+                string query = $"SELECT subject from blogs where subject IN (SELECT subject from blogs WHERE blogid IN (SELECT blogid from comments WHERE sentiment = 'positive') AND created_by = '{username}');";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
