@@ -56,7 +56,7 @@ public partial class Blog : Form {
         string userYFollowedBy = followedByY.Text;
         dt.Columns.Clear();
         dt.Rows.Clear();
-        dt.Columns.Add("Blogs");
+        dt.Columns.Add("Username");
         foreach (var user in database.getFollowedBy(userXFollowedBy, userYFollowedBy)) { dt.Rows.Add(user); }
         dataGridView1.DataSource = dt;
         dataGridView1.AutoResizeColumns();
@@ -141,7 +141,7 @@ public partial class Blog : Form {
         userBlogList = new TextBox();
 
         topCommenter = new Button();
-        topCommenter.Text = "Show Top Commenter";
+        topCommenter.Text = "Show Top Positive Commenter";
         topCommenter.AutoSize = true;
         topCommenter.Click += new System.EventHandler(topCommenterOnClick);
 
