@@ -67,7 +67,47 @@ public class DatabaseHandler {
 
         public void resetDatabase() {
             using(NpgsqlConnection con = GetConnection()) {
-                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo, follows, hobbies RESTART IDENTITY";
+                string query = $"TRUNCATE TABLE blogs, blogstags, comments, userinfo, follows, hobbies RESTART IDENTITY; INSERT INTO userinfo VALUES ('batman','1234','bat','bat','nananana@batman.com'),('bob','12345','bob','bob','bobthatsme@yahoo.com'),('catlover','abcd','cat','cat','catlover@whiskers.com'),('doglover','efds','dog','dog','doglover@bark.net'),('jdoe','25478','joe','jod','jane@doe.com'),('jsmith','1111','john','smith','jsmith@gmail.com'),('matty','2222','mat','mat','matty@csun.edu'),('notbob','5555','not','bob','stopcallingmebob@yahoo.com'),('pacman','9999','pacman','pacman','pacman@gmail.com'),('scooby','8888','scoby','scoby','scooby@doo.net'); ";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                int n = cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"INSERT INTO blogs (subject, description, pdate, created_by) VALUES ('Hello World','Hey everyone, this is my first blog. Hello world and all who inhabit it!','2020-03-15','jsmith'),('I love cats!','Catsare amazing. They\''re awesome, and fuzzy, and cute. Who DOESN\''T love cats?','2020-03-17','catlover'),('Dogs are the best.','So I saw a post the other day talking about cats. Now, I love cats. They\''re great. But here\''s the thing: dogs are just the best, okay? There\''s no question about it. That is all.','2020-03-19','doglover'),('I am the night.','To all you lowly criminals out there, this isa warning to know I am watching. I am justice. I am righteousness. I am the NIGHT.','2020-03-24','batman'),('Waka waka','waka waka waka waka waka waka waka waka waka waka waka waka waka waka waka waka','2020-03-31','pacman'),('Who is this Bob guy?','Decided to start tracking down this mysterious human known as \''Bob.\'' Who is Bob? What does he do?','2020-04-02','notbob'),('Re: I love cats.','A reader recently reachtto me about my last post.','2020-04-04','catlover'),('Scooby Dooby Doo!','The search for scooby snacks: Where did they go? I know this whole quarantine thing is affecting businesses, but aren\''t scooby snacks counted as an essential service?','2020-04-05','scooby'),('Bob Update','Dearreaders, I know you have been waiting anxiously for an update on Bob, but there isnot much to share so far.He appears to have little to no online presence.','2020-04-06','notbob'),('Lizard People.','What are your guys\'' thoughts on them ? I, forone, welcome out reptitlian overlords.','2020-04-12','jdoe'); ";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                int n = cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"INSERT INTO comments (sentiment, description, cdate, blogid, posted_by) VALUES ('negative','Cats are cool and all, but dogs are where it\''s at.','2020-03-17',2,'doglover'),('negative','What\''s all the hypeabout? Cats are clearly superior.','2020-03-20',3,'catlover'),('positive', 'Nice.', '2020-03-20', 4, 'scooby'),('positive', 'Who IS Bob? I can\''twait to find out.','2020-04-02',6,'jsmith'),('negative','I guess cat people justdon\''t know what they\''re missing.','2020-04-05',7,'doglover'),('positive','Thisis totally unrelated, but I just wanted to say I am a HUGE fan of yours.I loveyour work!','2020-04-05',8,'doglover'),('positive','Have you checked out Dog -Mart ? They\''ve got everything.','2020-04-06',8,'matty'),('negative','I was hopingthere\''d be more of an update. Sorry, Bob.','2020-04-07',9,'jsmith'),('positive', 'I think they\''re all secretly cats.Open your eyes, sheeple!','2020-04-13',10,'doglover'),('negative','Who ? Me ? Multimillionaire philanthropist ofArkham ? A lizard person ? Nope.Nothing to see here!','2020-04-15',10,'batman');";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                int n = cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            using(NpgsqlConnection con = GetConnection())
+            {
+                string query = $"INSERT INTO blogstags (tag) VALUES ('hello world'),('animals'),('cats'),('animals'),('dogs'),('crime'),('justice'),('cartoon'),('waka'),('bob');";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                int n = cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"INSERT INTO follows (leadername, followername) VALUES ('jsmith','bob'),('batman','catlover'),('doglover', 'catlover'),('pacman', 'catlover'),('catlover', 'doglover'),('jsmith', 'jdoe'),('bob', 'notbob'),('jdoe', 'notbob'),('batman', 'pacman'),('scooby', 'pacman'),('doglover', 'scooby'),('pacman', 'scooby'); ";
+                NpgsqlCommand cmd = new NpgsqlCommand(query, con);
+                con.Open();
+                int n = cmd.ExecuteNonQuery();
+                con.Close();
+            }
+            using (NpgsqlConnection con = GetConnection())
+            {
+                string query = $"INSERT INTO hobbies (username, hobby) VALUES ('batman','movie'),('bob','movie'),('catlover', 'movie'),('doglover', 'hiking'),('jdoe', 'dancing'),('jdoe', 'movie'),('jsmith', 'hiking'),('matty', 'bowling'),('notbob', 'calligraphy'),('pacman', 'dancing'),('pacman', 'movie'),('scooby', 'cooking');";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 int n = cmd.ExecuteNonQuery();
