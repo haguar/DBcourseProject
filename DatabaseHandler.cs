@@ -254,7 +254,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT subject from blogs where subject IN (SELECT subject from blogs WHERE blogid IN (SELECT blogid from comments WHERE sentiment = 'positive') AND created_by = '{username}');";
+                string query = $"SELECT subject FROM blogs WHERE blogid IN (SELECT comments.blogid from comments INNER JOIN blogs ON blogs.blogid = comments.blogid WHERE comments.blogid NOT IN (SELECT blogid from comments WHERE sentiment = 'negative')) AND created_by = '{username}';";
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -326,7 +326,7 @@ public class DatabaseHandler {
             ArrayList blogList = new ArrayList();
             using (NpgsqlConnection con = GetConnection())
             {
-                string query = $"SELECT created_by FROM blogs WHERE blogid NOT IN (SELECT blogid FROM comments WHERE sentiment = 'negative') AND blogid NOT IN (SELECT blogid from comments)"; //insert correct SELECT statement here
+                string query = $"SELECT created_by FROM blogs WHERE created_by NOT IN (SELECT created_by FROM blogs WHERE blogid IN (SELECT blogid FROM comments WHERE sentiment = 'negative'))"; //insert correct SELECT statement here
                 NpgsqlCommand cmd = new NpgsqlCommand(query, con);
                 con.Open();
                 NpgsqlDataReader reader = cmd.ExecuteReader();
